@@ -1,17 +1,19 @@
 import React from "react";
 import AppRouter from "./AppRouter";
-import { LoginPage } from "./LoginPage";
-import { useMemo, useReducer, createContext, useContext } from "react";
-import { initialState, reducer } from "./reducer.js";
+import AuthRouter from "./LoginPage";
 
 // put useContext here
 //Login page if is not login
 //use usereducer to handle state
 
-const AppContext = createContext();
+const isLogin = false;
 
 const DemoApp = () => {
-  return <AppRouter />;
+  if (isLogin) {
+    return <AppRouter />;
+  } else {
+    return <AuthRouter />;
+  }
 };
 
 export default DemoApp;
