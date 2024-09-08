@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 // };
 
 export default function AuthRouter() {
-  console.log("tsting auto rout");
   return (
     <Routes>
       <Route element={<Login />} path="/" />
