@@ -3,10 +3,6 @@ import { Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
 
-// export const LoginPage = () => {
-//   return <div>LoginPage</div>;
-// };
-
 export default function AuthRouter() {
   return (
     <Routes>
