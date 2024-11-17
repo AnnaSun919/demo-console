@@ -1,11 +1,36 @@
-export const initialState = null;
+export const appinitialState = {
+  isNavMenuClose: false,
+  currentApp: "default",
+};
 
-export function reducer(state, action) {
+export function appcontextReducer(state, action) {
   switch (action.type) {
-    case "test":
-      return {
-        ...state,
-      };
+    // case actionTypes.OPEN_NAV_MENU:
+    //   return {
+    //     ...state,
+    //     isNavMenuClose: false,
+    //   };
+    // case actionTypes.CLOSE_NAV_MENU:
+    //   return {
+    //     ...state,
+    //     isNavMenuClose: true,
+    //   };
+    // case actionTypes.COLLAPSE_NAV_MENU:
+    //   return {
+    //     ...state,
+    //     isNavMenuClose: !state.isNavMenuClose,
+    //   };
+    // case actionTypes.CHANGE_APP:
+    //   return {
+    //     ...state,
+    //     currentApp: action.playload,
+    //   };
+    // case actionTypes.DEFAULT_APP:
+    //   return {
+    //     ...state,
+    //     currentApp: "default",
+    //   };
+
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
