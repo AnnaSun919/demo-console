@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { login } from "../auth/auth.service";
+import { useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { login } from "../auth/actions";
 import "./Login.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const dispatch = useDispatch();
+
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Testing on submit");
-    console.log("username : " + username, "ps:" + password);
-
-    login({ loginData: { username: username, password: password } });
+    dispatch(login({ loginData: { username: username, password: password } }));
   };
 
   return (
@@ -34,6 +34,7 @@ const Login = () => {
             type="password"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="on"
           />
         </Form.Group>
         <Button variant="primary" type="submit">
