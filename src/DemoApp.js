@@ -1,6 +1,6 @@
 import React from "react";
 import AppRouter from "./AppRouter";
-import AuthRouter from "./LoginPage";
+import AuthRouter from "./IndexPage";
 
 // put useContext here
 //Login page if is not login
@@ -9,11 +9,9 @@ import AuthRouter from "./LoginPage";
 const isLogin = false;
 
 const DemoApp = () => {
-  if (isLogin) {
-    return <AppRouter />;
-  } else {
+
     return <AuthRouter />;
-  }
+
 };
 
 export default DemoApp;
