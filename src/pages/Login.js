@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { login } from "../auth/actions";
+import { login } from "../actions/Login";
 import "./Login.css";
 
 const Login = () => {

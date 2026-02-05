@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/actiontypes';
-import { BookingService } from '../helper/api';
+import BookingList from '../helper/api/BookListPage';
 
 export const getBookings =
   ({userId}) =>
@@ -7,7 +7,7 @@ export const getBookings =
     dispatch({
       type: ActionTypes.GET_BOOKINGS_LIST_REQUEST,
     });
-    const response = await BookingService.getBookings(userId);
+    const response = await BookingList.getBookings(userId);
     if (response && response.data.success) {
       dispatch({
         type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,

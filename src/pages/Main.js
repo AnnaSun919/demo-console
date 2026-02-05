@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import * as actionTypes from "../auth/types";
+import * as actionTypes from "../constants/actiontypes";
 
 const MainPage = () => {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
-import * as actionTypes from "./types";
-import * as authService from "./auth.service";
+import * as actionTypes from "../constants/actiontypes";
+import Auth from "../helper/api/Login";
 
 export const login =
   ({ loginData }) =>
@@ -7,7 +7,7 @@ export const login =
     dispatch({
       type: actionTypes.REQUEST_LOADING,
     });
-    const response = await authService.login({ loginData });
+    const response = await Auth.login(loginData);
 
     if (response&& response.data.success) {
       const auth_state = {
