@@ -1,14 +1,24 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import * as actionTypes from "../auth/types";
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
-  //if login already shows booking dashboard 
-  //auto run fetch booking data 
   const handleLogin = () => {
-    // later: redirect to login page or open modal
-    console.log("testing login")
+    navigate("/login");
+  };
+
+  const handleGetBooking = () => {
+    navigate("/bookings");
+  };
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("auth");
+    dispatch({ type: actionTypes.LOGOUT_SUCCESS });
     navigate("/login");
   };
 
@@ -17,12 +27,22 @@ const MainPage = () => {
       <div style={styles.card}>
         <h1 style={styles.title}>Welcome</h1>
         <p style={styles.subtitle}>
-          Please log in to continue
+          {isLoggedIn ? "You are logged in" : "Please log in to continue"}
         </p>
 
-        <button style={styles.button} onClick={handleLogin}>
-          Login
+        {!isLoggedIn && (
+          <button style={styles.button} onClick={handleLogin}>
+            Login
+          </button>
+        )}
+        <button style={styles.button} onClick={handleGetBooking}>
+          Get Booking
         </button>
+        {isLoggedIn && (
+          <button style={styles.logoutButton} onClick={handleLogout}>
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );
@@ -59,6 +79,17 @@ const styles = {
     cursor: "pointer",
     background: "#667eea",
     color: "#fff",
+    marginRight: "10px",
+  },
+  logoutButton: {
+    padding: "12px 24px",
+    border: "none",
+    borderRadius: "6px",
+    fontSize: "16px",
+    cursor: "pointer",
+    background: "#e74c3c",
+    color: "#fff",
+    marginTop: "15px",
   },
 };
 

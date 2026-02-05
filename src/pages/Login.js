@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { login } from "../auth/actions";
@@ -11,6 +12,14 @@ const Login = () => {
   const [validated, setValidated] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoading, isLoggedIn } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+       navigate("/main");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -20,8 +29,7 @@ const Login = () => {
       setValidated(true);
       return;
     }
-
-    dispatch(login({ loginData: { username: username, password: password } }));
+     dispatch(login({ loginData: { username: username, password: password } }));
   };
 
   return (
@@ -53,8 +61,8 @@ const Login = () => {
             Please provide a password.
           </Form.Control.Feedback>
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
+        <Button variant="primary" type="submit" disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Submit"}
         </Button>
       </Form>
     </div>

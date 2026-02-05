@@ -12,15 +12,15 @@ import { appinitialState, appcontextReducer } from "./reducer";
 const Context = createContext();
 
 const AUTH_INITIAL_STATE = {
-  current: {},
   isLoggedIn: false,
   isLoading: false,
   isSuccess: false,
 };
 
-const auth_state = AUTH_INITIAL_STATE;
+const savedAuth = window.localStorage.getItem("auth_state");
+const auth_state = savedAuth ? JSON.parse(savedAuth) : AUTH_INITIAL_STATE;
 
-const initialState = { auth: auth_state };
+const initialState = { auth: auth_state  };
 
 const store = configureStore({
   reducer: rootReducer,
