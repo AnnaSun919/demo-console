@@ -17,7 +17,9 @@ const MainPage = () => {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem("auth");
+    window.localStorage.removeItem("auth_state");
+    window.localStorage.removeItem("auth_role");
+    window.localStorage.removeItem("auth_token");
     dispatch({ type: actionTypes.LOGOUT_SUCCESS });
     navigate("/login");
   };
