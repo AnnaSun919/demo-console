@@ -23,7 +23,7 @@ export const login =
 
       dispatch({
         type: actionTypes.REQUEST_SUCCESS,
-        payload: response.result,
+        payload: response.data,
       });
     } else {
       dispatch({
