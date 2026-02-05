@@ -31,3 +31,26 @@ export const login =
       });
     }
   };
+
+  export const logout =
+  () =>
+  async (dispatch) => {
+    dispatch({
+      type: actionTypes.REQUEST_LOADING,
+    });
+    const response = await Auth.logout();
+
+    if (response&& response.data.success) {
+
+      window.localStorage.clear();
+      
+      dispatch({
+        type: actionTypes.REQUEST_SUCCESS,
+        payload: response.data,
+      });
+    } else {
+      dispatch({
+        type: actionTypes.REQUEST_FAILED,
+      });
+    }
+  };

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import * as actionTypes from "../constants/actiontypes";
+import { logout } from "../actions/Auth";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -17,10 +17,7 @@ const MainPage = () => {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem("auth_state");
-    window.localStorage.removeItem("auth_role");
-    window.localStorage.removeItem("auth_token");
-    dispatch({ type: actionTypes.LOGOUT_SUCCESS });
+    dispatch(logout());
     navigate("/login");
   };
 
