@@ -11,7 +11,7 @@ export const getBookings =
     if (response && response.data.success) {
       dispatch({
         type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,
-        payload: response.result,
+        payload: response.data,
       });
     } else {
       dispatch({

@@ -45,12 +45,11 @@ export const login =
       window.localStorage.clear();
       
       dispatch({
-        type: actionTypes.REQUEST_SUCCESS,
-        payload: response.data,
+        type: actionTypes.LOGOUT_SUCCESS,
       });
     } else {
       dispatch({
-        type: actionTypes.REQUEST_FAILED,
+        type: actionTypes.LOGOUT_FAILED,
       });
     }
   };
