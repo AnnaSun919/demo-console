@@ -7,11 +7,9 @@ import apiClient from './request';
 // 	}
 // };
 
-
-
 // Group all user-related APIs together
 export const BookingService = {
   getBookings(id) {
-  return apiClient.get(`/booking?userId=${id}`);
+  return apiClient.get(`/bookings?userId=${id}`);
   }
 };
