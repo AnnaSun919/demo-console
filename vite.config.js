@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { API_BASE_URL } from './src/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -13,7 +14,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081', 
+        target: API_BASE_URL, 
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/demo'),
       },
