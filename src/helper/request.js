@@ -1,4 +1,5 @@
 import axios from 'axios';
+import LocalStorageHelper from './local_storage_helper';
 
 const apiClient = axios.create({
   baseURL: '/api',
@@ -7,9 +8,8 @@ const apiClient = axios.create({
 
  apiClient.interceptors.request.use(
   (config) => {
-    const auth_token = localStorage.getItem('auth_token');
-    if (auth_token) {
-      const token = JSON.parse(auth_token)
+    const token = LocalStorageHelper.getToken();
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

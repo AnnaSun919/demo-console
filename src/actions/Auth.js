@@ -1,5 +1,6 @@
 import * as actionTypes from "../constants/actiontypes";
 import Auth from "../helper/api/Login";
+import LocalStorageHelper from "../helper/local_storage_helper";
 
 export const login =
   ({ loginData }) =>
@@ -16,10 +17,10 @@ export const login =
         isSuccess: true,
       }
 
-      window.localStorage.setItem("auth_state", JSON.stringify(auth_state));
-      window.localStorage.setItem("auth_role", JSON.stringify(response.data.admit));
-      window.localStorage.setItem("auth_token", JSON.stringify(response.data.auth.token));
-      window.localStorage.removeItem("isLogout");
+      LocalStorageHelper.setRole(response.data.admin)
+      LocalStorageHelper.setToken(response.data.auth.token)
+      LocalStorageHelper.setAuthState(auth_state)
+      localStorage.removeItem("isLogout");
 
       dispatch({
         type: actionTypes.REQUEST_SUCCESS,

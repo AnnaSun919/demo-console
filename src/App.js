@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
 import { appinitialState, appcontextReducer } from "./reducer";
+import LocalStorageHelper from "./helper/local_storage_helper";
 
 const Context = createContext();
 
@@ -16,8 +17,8 @@ const AUTH_INITIAL_STATE = {
   isSuccess: false,
 };
 
-const savedAuth = window.localStorage.getItem("auth_state");
-const auth_state = savedAuth ? JSON.parse(savedAuth) : AUTH_INITIAL_STATE;
+const savedAuth = LocalStorageHelper.getAuthState();
+const auth_state = savedAuth ? savedAuth : AUTH_INITIAL_STATE;
 
 const initialState = { auth: auth_state  };
 
