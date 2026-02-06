@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import { login } from "../actions/Auth";
-import "./Login.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [validated, setValidated] = useState(false);
+  const [errors, setErrors] = useState({});
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,54 +19,72 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-       navigate("/main");
+      navigate("/main");
     }
   }, [isLoggedIn, navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    if (form.checkValidity() === false || !username || !password) {
-      e.stopPropagation();
-      setValidated(true);
+
+    const newErrors = {};
+    if (!username) newErrors.username = "Please provide a username.";
+    if (!password) newErrors.password = "Please provide a password.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-     dispatch(login({ loginData: { username: username, password: password } }));
+
+    setErrors({});
+    dispatch(login({ loginData: { username, password } }));
   };
 
   return (
-    <div className="sign-in__wrapper">
-      <Form className="shadow p-4 bg-white rounded" noValidate validated={validated} onSubmit={handleLogin}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            placeholder="Enter username"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide a username.
-          </Form.Control.Feedback>
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            required
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="on"
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide a password.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Button variant="primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Submit"}
-        </Button>
-      </Form>
+    
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+      <Card className="w-[350px]">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleLogin}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              {errors.username && (
+                <p className="text-sm text-destructive">{errors.username}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password}</p>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Sign In"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 };

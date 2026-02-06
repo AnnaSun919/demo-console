@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/Auth";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -22,74 +24,32 @@ const MainPage = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Welcome</h1>
-        <p style={styles.subtitle}>
-          {isLoggedIn ? "You are logged in" : "Please log in to continue"}
-        </p>
-
-        {!isLoggedIn && (
-          <button style={styles.button} onClick={handleLogin}>
-            Login
-          </button>
-        )}
-        <button style={styles.button} onClick={handleGetBooking}>
-          Get Booking
-        </button>
-        {isLoggedIn && (
-          <button style={styles.logoutButton} onClick={handleLogout}>
-            Logout
-          </button>
-        )}
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+      <Card className="w-[350px]">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
+          <CardDescription>
+            {isLoggedIn ? "You are logged in" : "Please log in to continue"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {!isLoggedIn && (
+            <Button onClick={handleLogin} className="w-full">
+              Login
+            </Button>
+          )}
+          <Button variant="secondary" onClick={handleGetBooking} className="w-full">
+            Get Booking
+          </Button>
+          {isLoggedIn && (
+            <Button variant="destructive" onClick={handleLogout} className="w-full">
+              Logout
+            </Button>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    height: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "linear-gradient(135deg, #667eea, #764ba2)",
-  },
-  card: {
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "12px",
-    textAlign: "center",
-    width: "320px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-  },
-  title: {
-    marginBottom: "10px",
-  },
-  subtitle: {
-    color: "#666",
-    marginBottom: "30px",
-  },
-  button: {
-    padding: "12px 24px",
-    border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
-    cursor: "pointer",
-    background: "#667eea",
-    color: "#fff",
-    marginRight: "10px",
-  },
-  logoutButton: {
-    padding: "12px 24px",
-    border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
-    cursor: "pointer",
-    background: "#e74c3c",
-    color: "#fff",
-    marginTop: "15px",
-  },
 };
 
 export default MainPage;
