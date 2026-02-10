@@ -1,11 +1,10 @@
 
 const LocalStorageHelper = {
   setAuthState(auth_state) {
-    return localStorage.setItem('auth_state',auth_state);
+		localStorage.setItem('auth_state', JSON.stringify(auth_state));
   },
   getAuthState() {
-    const authState = localStorage.getItem('auth_state');
-    return authState || null ;
+    return JSON.parse(localStorage.getItem('auth_state'));
   },
   setRole(role) {
 		return localStorage.setItem('auth_role',JSON.stringify(role));
