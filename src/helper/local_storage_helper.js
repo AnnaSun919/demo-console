@@ -7,12 +7,18 @@ const LocalStorageHelper = {
     const authState = localStorage.getItem('auth_state');
     return authState || null ;
   },
-  setRole(user) {
-		return localStorage.setItem('auth_role',JSON.stringify(user));
+  setRole(role) {
+		return localStorage.setItem('auth_role',JSON.stringify(role));
 	},
 	getRole() {
-			const admin = JSON.parse(localStorage.getItem('auth_role'));
-			return admin || null;
+		return JSON.parse(localStorage.getItem('auth_role'));
+
+},
+	setUserInfo(user) {
+		return localStorage.setItem('auth_user_info',JSON.stringify(user));
+	},
+	getUserInfo() {
+		return JSON.parse(localStorage.getItem('auth_user_info'));
 	},
 	// Auth Token
 	getToken() {

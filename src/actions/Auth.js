@@ -17,9 +17,10 @@ export const login =
         isSuccess: true,
       }
 
-      LocalStorageHelper.setRole(response.data.admin)
-      LocalStorageHelper.setToken(response.data.auth.token)
-      LocalStorageHelper.setAuthState(auth_state)
+      LocalStorageHelper.setRole(response.data.userInfo.role);
+      LocalStorageHelper.setUserInfo(response.data.userInfo);
+      LocalStorageHelper.setToken(response.data.auth.token);
+      LocalStorageHelper.setAuthState(auth_state);
       localStorage.removeItem("isLogout");
 
       dispatch({
