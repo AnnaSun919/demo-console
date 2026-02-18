@@ -27,13 +27,12 @@ export const fetchAvailableRooms = ({ userId }) => async (dispatch) => {
 export const fetchAvailableTimeslots = (roomId, date) => async (dispatch) => {
   dispatch({ type: actionTypes.BOOK_ROOM_LOADING });
   try {
-    console.log("testing get availble slots")
-    console.log(roomId)
     const response = await UserApi.getAvailableTimeslots(roomId, date);
+
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.BOOK_ROOM_AVAILABLE_SLOTS_SUCCESS,
-        payload: response.data.slots || [],
+        payload: response.data.timeslots || [],
       });
     } else {
       dispatch({ type: actionTypes.BOOK_ROOM_ERROR });
@@ -47,7 +46,7 @@ export const fetchAvailableTimeslots = (roomId, date) => async (dispatch) => {
 export const bookRoom = (bookingData) => async (dispatch) => {
   dispatch({ type: actionTypes.BOOK_ROOM_LOADING });
   try {
-    const response = await AdminApi.bookRoom(bookingData);
+    const response = await UserApi.bookRoom(bookingData);
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.BOOK_ROOM_SUCCESS,

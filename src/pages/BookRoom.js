@@ -62,24 +62,35 @@ const BookRoom = () => {
     );
   });
 
-  // Generate time slots from 9:00 to 18:00 in 15-minute intervals
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 9; hour < 18; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-        slots.push(time);
-      }
+  // Format slot display - handle backend format: { date, slotStart, slotEnd, available }
+  const formatSlotDisplay = (slot) => {
+    if (typeof slot === 'string') {
+      return slot;
     }
-    return slots;
+    // Backend format: { slotStart: "09:00", slotEnd: "10:00" }
+    if (slot.slotStart && slot.slotEnd) {
+      return `${slot.slotStart} - ${slot.slotEnd}`;
+    }
+    // Fallback formats
+    if (slot.startTime) {
+      return `${moment(slot.startTime).format("HH:mm")} - ${moment(slot.endTime).format("HH:mm")}`;
+    }
+    if (slot.time) {
+      return slot.time;
+    }
+    return JSON.stringify(slot);
   };
 
-  const timeSlots = generateTimeSlots();
-
-  // Check if slot is unavailable
-  const isSlotUnavailable = (slot) => {
-    if (!availableSlots || availableSlots.length === 0) return false;
-    return !availableSlots.includes(slot);
+  // Get slot identifier for selection - use slotStart + slotEnd as unique key
+  const getSlotId = (slot) => {
+    if (typeof slot === 'string') return slot;
+    if (slot.id) return slot.id;
+    // Backend format uses slotStart + slotEnd
+    if (slot.slotStart && slot.slotEnd) {
+      return `${slot.date || selectedDate}_${slot.slotStart}_${slot.slotEnd}`;
+    }
+    if (slot.startTime) return slot.startTime;
+    return JSON.stringify(slot);
   };
 
   const handleSelectRoom = (room) => {
@@ -97,37 +108,55 @@ const BookRoom = () => {
   };
 
   const handleSlotClick = (slot) => {
-    if (isSlotUnavailable(slot)) return;
+    // Don't allow selecting unavailable slots
+    if (slot.available === false) return;
+
+    const slotId = getSlotId(slot);
 
     setSelectedSlots((prev) => {
-      if (prev.includes(slot)) {
-        return prev.filter((s) => s !== slot);
+      const isAlreadySelected = prev.some(s => getSlotId(s) === slotId);
+      if (isAlreadySelected) {
+        return prev.filter((s) => getSlotId(s) !== slotId);
       }
-      return [...prev, slot].sort();
+      return [...prev, slot];
     });
   };
 
   const getSlotClassName = (slot) => {
-    const unavailable = isSlotUnavailable(slot);
-    const isSelected = selectedSlots.includes(slot);
-    const baseClass = "p-2 text-center text-sm rounded cursor-pointer transition-colors";
+    const slotId = getSlotId(slot);
+    const isSelected = selectedSlots.some(s => getSlotId(s) === slotId);
+    const isUnavailable = slot.available === false;
+    const baseClass = "p-3 text-center text-sm rounded transition-colors";
 
-    if (unavailable) return `${baseClass} bg-red-100 text-red-600 cursor-not-allowed`;
-    if (isSelected) return `${baseClass} bg-green-500 text-white`;
-    return `${baseClass} bg-muted hover:bg-muted/80`;
+    // Unavailable - grey and not clickable
+    if (isUnavailable) {
+      return `${baseClass} bg-gray-200 text-gray-400 cursor-not-allowed line-through`;
+    }
+    // Selected - green
+    if (isSelected) {
+      return `${baseClass} bg-green-500 text-white cursor-pointer`;
+    }
+    // Available - default with hover
+    return `${baseClass} bg-muted hover:bg-muted/80 cursor-pointer`;
   };
 
   const handleSubmit = async () => {
     if (!selectedRoom || !selectedDate || selectedSlots.length === 0) return;
 
     setIsSubmitting(true);
-    const result = await dispatch(bookRoom({
-      roomId: selectedRoom.id,
+
+    // Prepare booking data - send selected slots with their slotStart/slotEnd
+    const bookingData = {
+      roomId: selectedRoom.roomId || selectedRoom.id,
       date: selectedDate,
-      startSlot: selectedSlots[0],
-      endSlot: selectedSlots[selectedSlots.length - 1],
-      slots: selectedSlots,
-    }));
+      slots: selectedSlots.map(slot => ({
+        date: slot.date || selectedDate,
+        slotStart: slot.slotStart,
+        slotEnd: slot.slotEnd,
+      })),
+    };
+
+    const result = await dispatch(bookRoom(bookingData));
     setIsSubmitting(false);
 
     if (result?.success) {
@@ -264,19 +293,19 @@ const BookRoom = () => {
               {/* Time Slot Grid */}
               {selectedDate && (
                 <div className="space-y-2">
-                  <Label>Select Time Slots (15-minute intervals)</Label>
+                  <Label>Available Time Slots</Label>
                   {isLoading ? (
                     <p className="text-muted-foreground">Loading available slots...</p>
-                  ) : (
+                  ) : availableSlots && availableSlots.length > 0 ? (
                     <>
-                      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-2">
-                        {timeSlots.map((slot) => (
+                      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                        {availableSlots.map((slot, index) => (
                           <div
-                            key={slot}
+                            key={getSlotId(slot) || index}
                             className={getSlotClassName(slot)}
                             onClick={() => handleSlotClick(slot)}
                           >
-                            {slot}
+                            {formatSlotDisplay(slot)}
                           </div>
                         ))}
                       </div>
@@ -290,11 +319,16 @@ const BookRoom = () => {
                           <span>Selected</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 bg-red-100 rounded"></div>
+                          <div className="w-4 h-4 bg-gray-200 rounded"></div>
                           <span>Unavailable</span>
                         </div>
                       </div>
                     </>
+                  ) : (
+                    <div className="text-center py-8 bg-muted rounded-md">
+                      <p className="text-muted-foreground">No available time slots for this date</p>
+                      <p className="text-sm text-muted-foreground mt-1">Please try another date</p>
+                    </div>
                   )}
                 </div>
               )}
@@ -307,9 +341,15 @@ const BookRoom = () => {
                     <p className="text-sm text-green-700">Room: {selectedRoom.name}</p>
                     <p className="text-sm text-green-700">Date: {selectedDate}</p>
                     <p className="text-sm text-green-700">
-                      Time: {selectedSlots[0]} - {selectedSlots[selectedSlots.length - 1]}
-                      ({selectedSlots.length * 15} minutes)
+                      Selected Slots: {selectedSlots.length}
                     </p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {selectedSlots.map((slot, index) => (
+                        <span key={index} className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">
+                          {formatSlotDisplay(slot)}
+                        </span>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
