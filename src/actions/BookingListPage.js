@@ -2,23 +2,23 @@ import * as ActionTypes from '../constants/actiontypes';
 import BookingList from '../helper/api/BookListPage';
 
 export const getBookings =
-  ({userId}) =>
-  async (dispatch) => {
-    dispatch({
-      type: ActionTypes.GET_BOOKINGS_LIST_REQUEST,
-    });
-    const response = await BookingList.getBookings(userId);
-    if (response && response.data.success) {
+  ({ userId }) =>
+    async (dispatch) => {
       dispatch({
-        type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,
-        payload: response.data,
+        type: ActionTypes.GET_BOOKINGS_LIST_REQUEST,
       });
-    } else {
-      dispatch({
-        type: ActionTypes.GET_BOOKINGS_LIST_ERROR,
-      });
-    }
-  };
+      const response = await BookingList.getBookings(userId);
+      if (response?.data?.success) {
+        dispatch({
+          type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,
+          payload: response.data,
+        });
+      } else {
+        dispatch({
+          type: ActionTypes.GET_BOOKINGS_LIST_ERROR,
+        });
+      }
+    };
 
 // export function getBookings(options) {
 // 	return async dispatch => {
