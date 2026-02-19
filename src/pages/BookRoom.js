@@ -39,7 +39,8 @@ const BookRoom = () => {
   // Fetch available slots when room and date change
   useEffect(() => {
     if (selectedRoom && selectedDate) {
-      dispatch(fetchAvailableTimeslots(selectedRoom.roomId, selectedDate));
+      const user = LocalStorageHelper.getUserInfo();
+      dispatch(fetchAvailableTimeslots(user.id, selectedRoom.roomId, selectedDate));
       setSelectedSlots([]);
     }
   }, [selectedRoom, selectedDate, dispatch]);

@@ -24,10 +24,10 @@ export const fetchAvailableRooms = ({ userId }) => async (dispatch) => {
   }
 };
 
-export const fetchAvailableTimeslots = (roomId, date) => async (dispatch) => {
+export const fetchAvailableTimeslots = (userId, roomId, date) => async (dispatch) => {
   dispatch({ type: actionTypes.BOOK_ROOM_LOADING });
   try {
-    const response = await UserApi.getAvailableTimeslots(roomId, date);
+    const response = await UserApi.getAvailableTimeslots(userId, roomId, date);
 
     if (response?.data?.success) {
       dispatch({
