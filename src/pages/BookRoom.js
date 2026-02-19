@@ -145,15 +145,20 @@ const BookRoom = () => {
 
     setIsSubmitting(true);
 
-    // Prepare booking data - send selected slots with their slotStart/slotEnd
+    const user = LocalStorageHelper.getUserInfo();
+
+    // Prepare booking data
+    // Format: { userId, roomId, timeslots: [{ start_at, end_at }] }
     const bookingData = {
-      roomId: selectedRoom.roomId || selectedRoom.id,
-      date: selectedDate,
-      slots: selectedSlots.map(slot => ({
-        date: slot.date || selectedDate,
-        slotStart: slot.slotStart,
-        slotEnd: slot.slotEnd,
-      })),
+      userId: user.id,
+      roomId: selectedRoom.roomId,
+      timeslots: selectedSlots.map(slot => {
+        const date = slot.date || selectedDate;
+        return {
+          start_at: `${date} ${slot.slotStart}:00`,
+          end_at: `${date} ${slot.slotEnd}:00`,
+        };
+      }),
     };
 
     const result = await dispatch(bookRoom(bookingData));
