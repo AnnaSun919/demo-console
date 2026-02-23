@@ -21,6 +21,7 @@ const ManageRooms = () => {
     name: "",
     capacity: "",
     groupIds: [],
+    isPublic: false,
   });
 
   useEffect(() => {
@@ -35,10 +36,11 @@ const ManageRooms = () => {
         name: room.name,
         capacity: room.capacity.toString(),
         groupIds: room.groupIds || [],
+        isPublic: room.isPublic || false,
       });
     } else {
       setEditingRoom(null);
-      setFormData({ name: "", capacity: "", groupIds: [] });
+      setFormData({ name: "", capacity: "", groupIds: [], isPublic: false });
     }
     setIsModalOpen(true);
   };
@@ -69,11 +71,23 @@ const ManageRooms = () => {
     }));
   };
 
+  // Handle public toggle
+  const handlePublicToggle = (checked) => {
+    setFormData((prev) => ({
+      ...prev,
+      isPublic: checked,
+      groupIds: checked ? [] : prev.groupIds, // Clear groups if public
+    }));
+  };
+
   // Get groups that are not yet selected (for dropdown)
   const availableGroups = groups.filter((group) => !formData.groupIds.includes(group.groupId));
 
   // Get selected group objects for display
   const selectedGroups = groups.filter((group) => formData.groupIds.includes(group.groupId));
+
+  // Validation: must be public OR have at least one group selected
+  const isAccessValid = formData.isPublic || formData.groupIds.length > 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,57 +169,72 @@ const ManageRooms = () => {
                     <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
-                    <Label>Allowed Groups</Label>
-                    {/* Selected groups as tags - ABOVE dropdown */}
-                    {selectedGroups.length > 0 && (
-                      <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
+                    <Label>Access Settings</Label>
+                    <p className="text-sm text-muted-foreground">Please select at least one group or mark as public</p>
 
-                        {selectedGroups.map((group) => (
+                    {/* Public checkbox */}
+                    <div className="flex items-center gap-2 py-3 ml-2">
+                      <input
+                        type="checkbox"
+                        id="isPublic"
+                        checked={formData.isPublic}
+                        onChange={(e) => handlePublicToggle(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                      <Label htmlFor="isPublic" className="cursor-pointer font-normal">
+                        Public Room (accessible to all users)
+                      </Label>
+                    </div>
 
-                          <span
-                            key={group.groupId}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-full text-sm"
-                          >
-                            {group.name}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveGroup(group.groupId)}
-                              className="ml-1 hover:bg-blue-600 rounded-full w-4 h-4 flex items-center justify-center"
-                            >
-                              ×
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    {/* Group selection - only show when not public */}
+                    {!formData.isPublic && (
+                      <>
+                        <Label className="text-sm text-muted-foreground">Allowed Groups</Label>
+                        {/* Selected groups as tags - ABOVE dropdown */}
+                        {selectedGroups.length > 0 && (
+                          <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
+                            {selectedGroups.map((group) => (
+                              <span
+                                key={group.groupId}
+                                className="inline-flex items-center gap-1 pl-3 pr-2 py-1 bg-blue-500 text-white rounded-full text-sm"
+                              >
+                                {group.name}
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveGroup(group.groupId)}
+                                  className="ml-1 mr-1 hover:bg-blue-600 rounded-full w-4 h-4 flex items-center justify-center"
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
 
-                    {/* Dropdown to select groups */}
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
-                      value=""
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          handleAddGroup(e.target.value);
-                        }
-                      }}
-                    >
-                      <option value="">Select a group to add...</option>
-                      {availableGroups.map((group) => (
-
-                        <option key={group.groupId} value={group.groupId}>
-                          {group.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    {selectedGroups.length === 0 && (
-                      <p className="text-sm text-muted-foreground">No groups selected yet</p>
+                        {/* Dropdown to select groups */}
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm "
+                          value=""
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleAddGroup(e.target.value);
+                            }
+                          }}
+                        >
+                          <option value="">Select a group to add...</option>
+                          {availableGroups.map((group) => (
+                            <option key={group.groupId} value={group.groupId}>
+                              {group.name}
+                            </option>
+                          ))}
+                        </select>
+                      </>
                     )}
                   </div>
                 </CardContent>
                 <CardFooter className="flex gap-3">
                   <Button type="button" variant="outline" onClick={handleCloseModal}>Cancel</Button>
-                  <Button type="submit">{editingRoom ? "Update" : "Create"}</Button>
+                  <Button type="submit" disabled={!isAccessValid}>{editingRoom ? "Update" : "Create"}</Button>
                 </CardFooter>
               </form>
             </Card>
