@@ -173,19 +173,19 @@ const ManageRooms = () => {
                     <Label htmlFor="description">Description (optional)</Label>
                     <Input id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Enter room description..." />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="capacity">Capacity</Label>
-                    <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <div className="flex items-center gap-2 py-3 ml-2">
+                  <div className="flex items-center mt-4">
+                    <div className="flex items-center gap-2 flex-1">
+                      <Label htmlFor="capacity">Capacity</Label>
+                      <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required className="w-20 ml-2" />
+                    </div>
+                    <div className="flex items-center gap-2 flex-1">
+                      <Label>Status</Label>
                       <input
                         type="checkbox"
                         id="isOpen"
                         checked={formData.isOpen}
                         onChange={(e) => setFormData({ ...formData, isOpen: e.target.checked })}
-                        className="w-4 h-4 rounded border-gray-300"
+                        className="w-4 h-4 rounded border-gray-300 ml-2"
                       />
                       <Label htmlFor="isOpen" className="cursor-pointer font-normal">
                         Open
@@ -194,10 +194,10 @@ const ManageRooms = () => {
                   </div>
                   <div className="space-y-2">
                     <Label>Access Settings</Label>
-                    <p className="text-sm text-muted-foreground">Please select at least one group or mark as public</p>
+                    {/* <p className="text-sm text-muted-foreground">Please select at least one group or mark as public</p> */}
 
                     {/* Public checkbox */}
-                    <div className="flex items-center gap-2 py-3 ml-2">
+                    <div className="flex items-center gap-2 py-2 ml-2">
                       <input
                         type="checkbox"
                         id="isPublic"
