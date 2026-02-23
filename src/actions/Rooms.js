@@ -25,13 +25,10 @@ export const fetchRoomById = (roomId) => async (dispatch) => {
 
 export const fetchRooms = () =>
   async (dispatch) => {
-    console.log("Testing fetchRooms");
     dispatch({ type: actionTypes.ROOMS_LOADING });
     try {
       const response = await AdminApi.getRooms();
 
-      console.log("testing");
-      console.log(response)
       if (response?.data?.success) {
 
         dispatch({
