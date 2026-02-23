@@ -121,7 +121,7 @@ const ManageRooms = () => {
               <CardTitle className="text-2xl font-bold">Manage Rooms</CardTitle>
               <CardDescription>Add, edit, or remove meeting rooms</CardDescription>
             </div>
-            <Button onClick={() => handleOpenModal()}>Create Room</Button>
+            <Button onClick={() => handleOpenModal()}>Add Room</Button>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -161,7 +161,7 @@ const ManageRooms = () => {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <Card className="w-[450px]">
               <CardHeader>
-                <CardTitle>{editingRoom ? "Edit Room" : "Create Room"}</CardTitle>
+                <CardTitle>{editingRoom ? "Edit Room" : "Add Room"}</CardTitle>
               </CardHeader>
               <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
