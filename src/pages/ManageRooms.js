@@ -21,8 +21,10 @@ const ManageRooms = () => {
   const [formData, setFormData] = useState({
     name: "",
     capacity: "",
+    description: "",
     groupIds: [],
     isPublic: false,
+    isOpen: true,
   });
 
   useEffect(() => {
@@ -36,12 +38,14 @@ const ManageRooms = () => {
       setFormData({
         name: room.name,
         capacity: room.capacity.toString(),
+        description: room.description || "",
         groupIds: room.groupIds || [],
         isPublic: room.isPublic || false,
+        isOpen: room.isOpen !== false,
       });
     } else {
       setEditingRoom(null);
-      setFormData({ name: "", capacity: "", groupIds: [], isPublic: false });
+      setFormData({ name: "", capacity: "", description: "", groupIds: [], isPublic: false, isOpen: true });
     }
     setIsModalOpen(true);
   };
@@ -166,8 +170,27 @@ const ManageRooms = () => {
                     <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="description">Description (optional)</Label>
+                    <Input id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Enter room description..." />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="capacity">Capacity</Label>
                     <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <div className="flex items-center gap-2 py-3 ml-2">
+                      <input
+                        type="checkbox"
+                        id="isOpen"
+                        checked={formData.isOpen}
+                        onChange={(e) => setFormData({ ...formData, isOpen: e.target.checked })}
+                        className="w-4 h-4 rounded border-gray-300"
+                      />
+                      <Label htmlFor="isOpen" className="cursor-pointer font-normal">
+                        Open
+                      </Label>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Access Settings</Label>
