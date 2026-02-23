@@ -155,7 +155,7 @@ const ManageRooms = () => {
                         <td className="p-3 text-right">
                           <div className="flex justify-end gap-2">
                             <Button variant="outline" size="sm" onClick={() => handleOpenModal(room)}>Edit</Button>
-                            <Button variant="destructive" size="sm" onClick={() => handleDeleteRoom(room.id)}>Delete</Button>
+                            <Button variant="destructive" size="sm" onClick={() => handleDeleteRoom(room.roomId)}>Delete</Button>
                           </div>
                         </td>
                       </tr>

@@ -46,7 +46,7 @@ const roomsReducer = (state = initialState, action) => {
     case actionTypes.ROOMS_DELETE_SUCCESS:
       return {
         ...state,
-        rooms: state.rooms.filter((room) => room.id !== action.payload),
+        rooms: state.rooms.filter((room) => room.roomId !== action.payload),
         isLoading: false,
       };
     case actionTypes.ROOM_DETAIL_LOADING:
