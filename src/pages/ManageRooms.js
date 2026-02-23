@@ -48,14 +48,32 @@ const ManageRooms = () => {
     setEditingRoom(null);
   };
 
-  const handleGroupToggle = (groupId) => {
+  // Get group ID (handle both id and groupId)
+  const getGroupId = (group) => group.groupId;
+
+  // Add group from dropdown
+  const handleAddGroup = (groupId) => {
+    const id = Number(groupId);
+    if (!id || formData.groupIds.includes(id)) return;
     setFormData((prev) => ({
       ...prev,
-      groupIds: prev.groupIds.includes(groupId)
-        ? prev.groupIds.filter((id) => id !== groupId)
-        : [...prev.groupIds, groupId],
+      groupIds: [...prev.groupIds, id],
     }));
   };
+
+  // Remove group from selected list
+  const handleRemoveGroup = (groupId) => {
+    setFormData((prev) => ({
+      ...prev,
+      groupIds: prev.groupIds.filter((id) => id !== groupId),
+    }));
+  };
+
+  // Get groups that are not yet selected (for dropdown)
+  const availableGroups = groups.filter((group) => !formData.groupIds.includes(group.groupId));
+
+  // Get selected group objects for display
+  const selectedGroups = groups.filter((group) => formData.groupIds.includes(group.groupId));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -137,22 +155,52 @@ const ManageRooms = () => {
                     <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
-                    <Label>Allowed Groups (click to select)</Label>
-                    <div className="flex flex-wrap gap-2 p-3 border rounded-md">
-                      {groups.map((group) => (
-                        <button
-                          key={group.id}
-                          type="button"
-                          onClick={() => handleGroupToggle(group.id)}
-                          className={`px-3 py-1 rounded-full text-sm transition-colors ${formData.groupIds.includes(group.id)
-                            ? "bg-blue-500 text-white"
-                            : "bg-muted hover:bg-muted/80"
-                            }`}
-                        >
+                    <Label>Allowed Groups</Label>
+                    {/* Selected groups as tags - ABOVE dropdown */}
+                    {selectedGroups.length > 0 && (
+                      <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
+
+                        {selectedGroups.map((group) => (
+
+                          <span
+                            key={group.groupId}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-full text-sm"
+                          >
+                            {group.name}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveGroup(group.groupId)}
+                              className="ml-1 hover:bg-blue-600 rounded-full w-4 h-4 flex items-center justify-center"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Dropdown to select groups */}
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                      value=""
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          handleAddGroup(e.target.value);
+                        }
+                      }}
+                    >
+                      <option value="">Select a group to add...</option>
+                      {availableGroups.map((group) => (
+
+                        <option key={group.groupId} value={group.groupId}>
                           {group.name}
-                        </button>
+                        </option>
                       ))}
-                    </div>
+                    </select>
+
+                    {selectedGroups.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No groups selected yet</p>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter className="flex gap-3">
