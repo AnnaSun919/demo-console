@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fetchRooms, createRoom, updateRoom, deleteRoom } from "../actions/Rooms";
+import { fetchRooms, fetchRoomById, createRoom, updateRoom, deleteRoom } from "../actions/Rooms";
 import { fetchGroups } from "../actions/Groups";
 
 const ManageRooms = () => {
@@ -32,17 +32,21 @@ const ManageRooms = () => {
     dispatch(fetchGroups());
   }, [dispatch]);
 
-  const handleOpenModal = (room = null) => {
+  const handleOpenModal = async (room = null) => {
     if (room) {
-      setEditingRoom(room);
-      setFormData({
-        name: room.name,
-        capacity: room.capacity.toString(),
-        description: room.description || "",
-        groupIds: room.groupIds || [],
-        isPublic: room.isPublic || false,
-        isOpen: room.isOpen !== false,
-      });
+      const result = await dispatch(fetchRoomById(room.roomId));
+      if (result.success) {
+        const roomData = result.room;
+        setEditingRoom(roomData);
+        setFormData({
+          name: roomData.name,
+          capacity: roomData.capacity?.toString() || "",
+          description: roomData.description || "",
+          groupIds: roomData.groupIds || [],
+          isPublic: roomData.isPublic || false,
+          isOpen: roomData.status === "open",
+        });
+      }
     } else {
       setEditingRoom(null);
       setFormData({ name: "", capacity: "", description: "", groupIds: [], isPublic: false, isOpen: true });
@@ -96,7 +100,14 @@ const ManageRooms = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const submitData = { ...formData, capacity: parseInt(formData.capacity, 10) };
+    const submitData = {
+      name: formData.name,
+      description: formData.description,
+      status: formData.isOpen ? "open" : "closed",
+      capacity: formData.capacity,
+      isPublic: formData.isPublic,
+      groupIds: formData.groupIds,
+    };
 
     if (editingRoom) {
       const result = await dispatch(updateRoom(editingRoom.id, submitData));

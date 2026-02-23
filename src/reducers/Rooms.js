@@ -2,7 +2,9 @@ import * as actionTypes from "../constants/actiontypes";
 
 const initialState = {
   rooms: [],
+  roomDetail: null,
   isLoading: false,
+  isDetailLoading: false,
   error: false,
 };
 
@@ -46,6 +48,23 @@ const roomsReducer = (state = initialState, action) => {
         ...state,
         rooms: state.rooms.filter((room) => room.id !== action.payload),
         isLoading: false,
+      };
+    case actionTypes.ROOM_DETAIL_LOADING:
+      return {
+        ...state,
+        isDetailLoading: true,
+      };
+    case actionTypes.ROOM_DETAIL_SUCCESS:
+      return {
+        ...state,
+        roomDetail: action.payload,
+        isDetailLoading: false,
+      };
+    case actionTypes.ROOM_DETAIL_ERROR:
+      return {
+        ...state,
+        roomDetail: null,
+        isDetailLoading: false,
       };
     case actionTypes.LOGOUT_SUCCESS:
       return initialState;

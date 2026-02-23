@@ -1,6 +1,28 @@
 import * as actionTypes from "../constants/actiontypes";
 import AdminApi from "../helper/api/Admin";
 
+export const fetchRoomById = (roomId) => async (dispatch) => {
+  dispatch({ type: actionTypes.ROOM_DETAIL_LOADING });
+  try {
+    const response = await AdminApi.getRoomById(roomId);
+    if (response?.data?.success) {
+      const roomData = response.data.room.room;
+      const groupIds = response.data.room.groupIds || [];
+      dispatch({
+        type: actionTypes.ROOM_DETAIL_SUCCESS,
+        payload: { ...roomData, groupIds },
+      });
+      return { success: true, room: { ...roomData, groupIds } };
+    }
+    dispatch({ type: actionTypes.ROOM_DETAIL_ERROR });
+    return { success: false };
+  } catch (error) {
+    console.error("Failed to fetch room details:", error);
+    dispatch({ type: actionTypes.ROOM_DETAIL_ERROR });
+    return { success: false };
+  }
+};
+
 export const fetchRooms = () =>
   async (dispatch) => {
     console.log("Testing fetchRooms");
