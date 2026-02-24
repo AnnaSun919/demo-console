@@ -69,6 +69,7 @@ const ManageRooms = () => {
     setFormData((prev) => ({
       ...prev,
       groupIds: [...prev.groupIds, id],
+      isPublic: false,
     }));
   };
 
@@ -207,19 +208,21 @@ const ManageRooms = () => {
                     <Label>Access Settings</Label>
                     {/* <p className="text-sm text-muted-foreground">Please select at least one group or mark as public</p> */}
 
-                    {/* Public checkbox */}
-                    <div className="flex items-center gap-2 py-2 ml-2">
-                      <input
-                        type="checkbox"
-                        id="isPublic"
-                        checked={formData.isPublic}
-                        onChange={(e) => handlePublicToggle(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300"
-                      />
-                      <Label htmlFor="isPublic" className="cursor-pointer font-normal">
-                        Public Room (accessible to all users)
-                      </Label>
-                    </div>
+                    {/* Public checkbox - hide when groups are selected */}
+                    {formData.groupIds.length === 0 && (
+                      <div className="flex items-center gap-2 py-2 ml-2">
+                        <input
+                          type="checkbox"
+                          id="isPublic"
+                          checked={formData.isPublic}
+                          onChange={(e) => handlePublicToggle(e.target.checked)}
+                          className="w-4 h-4 rounded border-gray-300"
+                        />
+                        <Label htmlFor="isPublic" className="cursor-pointer font-normal">
+                          Public Room (accessible to all users)
+                        </Label>
+                      </div>
+                    )}
 
                     {/* Group selection - only show when not public */}
                     {!formData.isPublic && (
@@ -246,19 +249,25 @@ const ManageRooms = () => {
                           </div>
                         )}
 
-                        {/* Dropdown to select groups */}
-                        <Select onValueChange={(value) => handleAddGroup(value)}>
-                          <SelectTrigger className="w-full bg-white">
-                            <SelectValue placeholder="Select a group to add..." />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white">
+                        {/* Dropdown to select groups - show when there are available groups */}
+                        {availableGroups.length > 0 && (
+                          <select
+                            className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                            value=""
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                handleAddGroup(e.target.value);
+                              }
+                            }}
+                          >
+                            <option value="">Select a group to add...</option>
                             {availableGroups.map((group) => (
-                              <SelectItem key={group.groupId} value={String(group.groupId)}>
+                              <option key={group.groupId} value={group.groupId}>
                                 {group.name}
-                              </SelectItem>
+                              </option>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </select>
+                        )}
                       </>
                     )}
                   </div>
