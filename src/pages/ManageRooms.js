@@ -227,8 +227,7 @@ const ManageRooms = () => {
                     {/* Group selection - only show when not public */}
                     {!formData.isPublic && (
                       <>
-                        <Label className="text-sm text-muted-foreground">Allowed Groups</Label>
-                        {/* Selected groups as tags - ABOVE dropdown */}
+                        {/* Selected groups as tags */}
                         {selectedGroups.length > 0 && (
                           <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
                             {selectedGroups.map((group) => (
@@ -248,6 +247,9 @@ const ManageRooms = () => {
                             ))}
                           </div>
                         )}
+
+                        {/* Allowed Groups label - always above dropdown */}
+                        <Label className="text-sm text-muted-foreground">Allowed Groups</Label>
 
                         {/* Dropdown to select groups - show when there are available groups */}
                         {availableGroups.length > 0 && (
