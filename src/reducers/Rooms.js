@@ -39,7 +39,7 @@ const roomsReducer = (state = initialState, action) => {
       return {
         ...state,
         rooms: state.rooms.map((room) =>
-          room.id === action.payload.id ? { ...room, ...action.payload } : room
+          room.roomId === action.payload.roomId ? { ...room, ...action.payload } : room
         ),
         isLoading: false,
       };

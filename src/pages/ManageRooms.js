@@ -111,7 +111,7 @@ const ManageRooms = () => {
     };
 
     if (editingRoom) {
-      const result = await dispatch(updateRoom(editingRoom.id, submitData));
+      const result = await dispatch(updateRoom(editingRoom.roomId, submitData));
       if (result.success) handleCloseModal();
     } else {
       const result = await dispatch(createRoom(submitData));

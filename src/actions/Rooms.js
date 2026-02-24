@@ -6,13 +6,12 @@ export const fetchRoomById = (roomId) => async (dispatch) => {
   try {
     const response = await AdminApi.getRoomById(roomId);
     if (response?.data?.success) {
-      const roomData = response.data.room.room;
-      const groupIds = response.data.room.groupIds || [];
+      const roomData = response.data.room;
       dispatch({
         type: actionTypes.ROOM_DETAIL_SUCCESS,
-        payload: { ...roomData, groupIds },
+        payload: roomData,
       });
-      return { success: true, room: { ...roomData, groupIds } };
+      return { success: true, room: roomData };
     }
     dispatch({ type: actionTypes.ROOM_DETAIL_ERROR });
     return { success: false };
@@ -69,7 +68,7 @@ export const updateRoom = (roomId, roomData) => async (dispatch) => {
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.ROOMS_UPDATE_SUCCESS,
-        payload: { id: roomId, ...roomData },
+        payload: { roomId, ...roomData },
       });
       return { success: true };
     }
