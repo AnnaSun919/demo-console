@@ -27,8 +27,8 @@ export default {
     return await apiClient.post('/admin/add-room', roomData);
   },
 
-  async updateRoom(id, roomData) {
-    return await apiClient.put(`/admin/update-room/${id}`, roomData);
+  async editRoom(roomId, roomData) {
+    return await apiClient.put('/admin/edit-room', roomData, { params: { roomId } });
   },
 
   async deleteRoom(roomId) {

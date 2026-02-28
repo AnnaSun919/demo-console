@@ -61,10 +61,10 @@ export const createRoom = (roomData) => async (dispatch) => {
   }
 };
 
-export const updateRoom = (roomId, roomData) => async (dispatch) => {
+export const editRoom = (roomId, roomData) => async (dispatch) => {
   dispatch({ type: actionTypes.ROOMS_LOADING });
   try {
-    const response = await AdminApi.updateRoom(roomId, roomData);
+    const response = await AdminApi.editRoom(roomId, roomData);
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.ROOMS_UPDATE_SUCCESS,
@@ -74,7 +74,7 @@ export const updateRoom = (roomId, roomData) => async (dispatch) => {
     }
     return { success: false };
   } catch (error) {
-    console.error("Failed to update room:", error);
+    console.error("Failed to edit room:", error);
     return { success: false };
   }
 };

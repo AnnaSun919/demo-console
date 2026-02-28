@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fetchRooms, fetchRoomById, createRoom, updateRoom, deleteRoom } from "../actions/Rooms";
+import { fetchRooms, fetchRoomById, createRoom, editRoom, deleteRoom } from "../actions/Rooms";
 import { fetchGroups } from "../actions/Groups";
 
 const ManageRooms = () => {
@@ -209,7 +209,7 @@ const ManageRooms = () => {
     };
 
     if (editingRoom) {
-      const result = await dispatch(updateRoom(editingRoom.roomId, submitData));
+      const result = await dispatch(editRoom(editingRoom.roomId, submitData));
       if (result.success) handleCloseModal();
     } else {
       const result = await dispatch(createRoom(submitData));
