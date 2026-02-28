@@ -73,14 +73,6 @@ const Dashboard = () => {
             </Card>
           </RoleGuard>
 
-          <RoleGuard allowedRoles={['super_admin']}>
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/manage-users")}>
-              <CardContent className="p-6 text-center">
-                <CardTitle className="text-lg mb-2">Manage Users</CardTitle>
-                <CardDescription>Add or edit users</CardDescription>
-              </CardContent>
-            </Card>
-          </RoleGuard>
         </div>
 
         {/* Admin Section */}
