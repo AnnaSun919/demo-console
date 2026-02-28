@@ -48,21 +48,9 @@ export default {
     });
   },
 
-  // Group Management
+  // Group Management (read-only)
   async getAllGroups() {
     return await apiClient.get('/admin/groups');
-  },
-
-  async createGroup(groupData) {
-    return await apiClient.post('/admin/create-group', groupData);
-  },
-
-  async updateGroup(id, groupData) {
-    return await apiClient.put(`/admin/update-group/${id}`, groupData);
-  },
-
-  async deleteGroup(id) {
-    return await apiClient.delete(`/admin/delete-group/${id}`);
   },
 
   // Booking Approval

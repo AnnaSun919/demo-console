@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import BookRoom from "./pages/BookRoom";
 import MyBookings from "./pages/MyBookings";
 import ManageRooms from "./pages/ManageRooms";
+import Groups from "./pages/Groups";
 import ApproveBookings from "./pages/ApproveBookings";
 import Unauthorized from "./pages/Unauthorized";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -29,6 +30,7 @@ export default function AuthRouter() {
 
       {/* Admin routes (admin + superadmin) */}
       <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><ManageRooms /></ProtectedRoute>} path="/manage-rooms" />
+      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><Groups /></ProtectedRoute>} path="/groups" />
       <Route element={<ProtectedRoute ><ApproveBookings /></ProtectedRoute>} path="/approve-bookings" />
 
       {/* Default redirect */}

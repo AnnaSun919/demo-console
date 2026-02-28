@@ -101,6 +101,18 @@ const Dashboard = () => {
                 </Button>
               </CardContent>
             </Card>
+
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/groups")}>
+              <CardHeader>
+                <CardTitle>Groups</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Review user groups</p>
+                <Button variant="outline" className="mt-4 w-full">
+                  View Groups
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </RoleGuard>
 
