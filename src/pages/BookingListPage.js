@@ -41,7 +41,7 @@ const BookingList = (state) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-8">
+    <div className=" p-8">
       <Card className="max-w-4xl mx-auto">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-2xl font-bold">Reservations & Bookings</CardTitle>

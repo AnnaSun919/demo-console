@@ -1,55 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import RoleGuard from "@/components/auth/RoleGuard";
-import LocalStorageHelper from "../helper/local_storage_helper";
-import { logout } from "../actions/Auth";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.auth);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("auth_state");
-    localStorage.removeItem("auth_role");
-    navigate("/login");
-  };
-  const userRole = LocalStorageHelper.getRole();
-  const role = userRole?.role || 'user';
-  const userName = userRole?.name || 'User';
-
-  const isAdmin = role === 'admin' || role === 'super_admin';
-  const isSuperAdmin = role === 'super_admin';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-6">
+    <div className="p-6">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Welcome Section */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl font-bold">
-                Welcome back, {userName}!
-              </CardTitle>
-              <CardDescription>
-                {isAdmin
-                  ? "You have administrator access. Manage your system from here."
-                  : "Here's an overview of your bookings and quick actions."}
-              </CardDescription>
-            </div>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
-          </CardHeader>
-        </Card>
-
         {/* Quick Links */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/book-room")}>
             <CardContent className="p-6 text-center">
               <CardTitle className="text-lg mb-2">Book a Room</CardTitle>
@@ -72,7 +34,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </RoleGuard>
-
         </div>
 
         {/* Admin Section */}

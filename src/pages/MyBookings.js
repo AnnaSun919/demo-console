@@ -61,7 +61,7 @@ const MyBookings = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-6">
+    <div className="p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         <Card>
           <CardHeader>
