@@ -32,8 +32,8 @@ const myBookingsReducer = (state = initialState, action) => {
       return {
         ...state,
         bookings: state.bookings.map((booking) =>
-          booking.id === action.payload
-            ? { ...booking, status: "cancelled" }
+          booking.bookingId === action.payload.bookingId
+            ? { ...booking, status: action.payload.status }
             : booking
         ),
         isLoading: false,

@@ -28,7 +28,7 @@ export const cancelBooking = (bookingId) => async (dispatch) => {
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.MY_BOOKINGS_CANCEL_SUCCESS,
-        payload: bookingId,
+        payload: response.data.booking,
       });
       return { success: true };
     }

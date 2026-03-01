@@ -19,16 +19,14 @@ const MyBookings = () => {
     dispatch(fetchMyBookings({ userId: user.id }));
   }, [dispatch]);
 
-  const today = new Date().toISOString().split('T')[0];
-
   const getFilteredBookings = () => {
     if (!bookings) return [];
     switch (activeTab) {
       case "upcoming":
         return bookings.filter((b) =>
-          moment(b.endAt).isBefore(moment()) && b.status !== 'cancelled');
+          moment(b.endAt).isAfter(moment()) && b.status?.toUpperCase() !== 'CANCELLED');
       case "past":
-        return bookings.filter((b) => moment(b.endAt).isAfter(moment()));
+        return bookings.filter((b) => moment(b.endAt).isBefore(moment()));
       default:
         return bookings;
     }
@@ -36,14 +34,15 @@ const MyBookings = () => {
 
   const getStatusBadge = (status) => {
     const baseClass = "px-2 py-1 rounded-full text-xs font-medium";
-    switch (status) {
-      case "confirmed":
-      case "approved":
+    const statusUpper = status?.toUpperCase();
+    switch (statusUpper) {
+      case "CONFIRMED":
+      case "APPROVED":
         return <span className={`${baseClass} bg-green-100 text-green-700`}>Confirmed</span>;
-      case "pending":
+      case "PENDING":
         return <span className={`${baseClass} bg-yellow-100 text-yellow-700`}>Pending</span>;
-      case "cancelled":
-      case "rejected":
+      case "CANCELLED":
+      case "REJECTED":
         return <span className={`${baseClass} bg-red-100 text-red-700`}>Cancelled</span>;
       default:
         return <span className={`${baseClass} bg-gray-100 text-gray-700`}>{status}</span>;
@@ -93,31 +92,33 @@ const MyBookings = () => {
             ) : getFilteredBookings().length > 0 ? (
               <div className="space-y-4">
                 {getFilteredBookings().map((booking) => (
-                  <Card key={booking.id} className="bg-muted">
+                  <Card key={booking.bookingId} className="bg-muted">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{booking.roomName || booking.room}</h3>
+                            <h3 className="font-semibold">{booking.roomName}</h3>
                             {getStatusBadge(booking.status)}
                           </div>
+                          {booking.title && (
+                            <p className="text-sm text-muted-foreground">
+                              {booking.title}
+                            </p>
+                          )}
                           <p className="text-sm text-muted-foreground">
-                            Room : {booking.roomId}
+                            Date: {moment(booking.startAt).format("YYYY-MM-DD")}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            Date: {moment(booking.startAt).format("yyyy-MM-DD")} - {moment(booking.endAt).format("yyyy-MM-DD")}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Time: {moment(booking.startAt).format("HH:ss")} - {moment(booking.endAt).format("HH:SS")}
+                            Time: {moment(booking.startAt).format("HH:mm")} - {moment(booking.endAt).format("HH:mm")}
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          {(booking.status === "pending" || booking.status === "confirmed") &&
-                            booking.date >= today && (
+                          {(booking.status?.toUpperCase() === "PENDING" || booking.status?.toUpperCase() === "CONFIRMED") &&
+                            moment(booking.startAt).isAfter(moment()) && (
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleCancelBooking(booking.id)}
+                                onClick={() => handleCancelBooking(booking.bookingId)}
                               >
                                 Cancel
                               </Button>
