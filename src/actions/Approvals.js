@@ -1,10 +1,10 @@
 import * as actionTypes from "../constants/actiontypes";
 import AdminApi from "../helper/api/Admin";
 
-export const fetchPendingBookings = () => async (dispatch) => {
+export const fetchAllBookings = () => async (dispatch) => {
   dispatch({ type: actionTypes.APPROVALS_LOADING });
   try {
-    const response = await AdminApi.getPendingBookings();
+    const response = await AdminApi.getAllBookings();
     if (response?.data?.success) {
       dispatch({
         type: actionTypes.APPROVALS_FETCH_SUCCESS,
@@ -14,7 +14,7 @@ export const fetchPendingBookings = () => async (dispatch) => {
       dispatch({ type: actionTypes.APPROVALS_FETCH_ERROR });
     }
   } catch (error) {
-    console.error("Failed to fetch pending bookings:", error);
+    console.error("Failed to fetch bookings:", error);
     dispatch({ type: actionTypes.APPROVALS_FETCH_ERROR });
   }
 };

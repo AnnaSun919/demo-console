@@ -65,10 +65,10 @@ const Dashboard = () => {
           </Card>
 
           <RoleGuard allowedRoles={['admin', 'super_admin']}>
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/approve-bookings")}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/user-bookings")}>
               <CardContent className="p-6 text-center">
-                <CardTitle className="text-lg mb-2">Approve Bookings</CardTitle>
-                <CardDescription>Review pending requests</CardDescription>
+                <CardTitle className="text-lg mb-2">User Bookings</CardTitle>
+                <CardDescription>View and manage all future bookings</CardDescription>
               </CardContent>
             </Card>
           </RoleGuard>
@@ -90,14 +90,14 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/approve-bookings")}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/user-bookings")}>
               <CardHeader>
-                <CardTitle>Pending Approvals</CardTitle>
+                <CardTitle>User Bookings</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Review booking requests</p>
+                <p className="text-muted-foreground">View and manage all future bookings</p>
                 <Button variant="outline" className="mt-4 w-full">
-                  Review Now
+                  View Bookings
                 </Button>
               </CardContent>
             </Card>

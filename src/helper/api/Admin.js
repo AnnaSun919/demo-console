@@ -53,9 +53,9 @@ export default {
     return await apiClient.get('/admin/groups');
   },
 
-  // Booking Approval
-  async getPendingBookings() {
-    return await apiClient.get('/admin/pending-approvals');
+  // Booking Management
+  async getAllBookings() {
+    return await apiClient.get('/admin/all-bookings');
   },
 
   async approveBooking(bookingId) {

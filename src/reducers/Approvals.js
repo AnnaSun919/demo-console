@@ -1,7 +1,7 @@
 import * as actionTypes from "../constants/actiontypes";
 
 const initialState = {
-  pendingBookings: [],
+  bookings: [],
   isLoading: false,
   error: false,
 };
@@ -17,7 +17,7 @@ const approvalsReducer = (state = initialState, action) => {
     case actionTypes.APPROVALS_FETCH_SUCCESS:
       return {
         ...state,
-        pendingBookings: action.payload,
+        bookings: action.payload,
         isLoading: false,
         error: false,
       };
@@ -30,16 +30,20 @@ const approvalsReducer = (state = initialState, action) => {
     case actionTypes.APPROVALS_APPROVE_SUCCESS:
       return {
         ...state,
-        pendingBookings: state.pendingBookings.filter(
-          (booking) => booking.bookingId !== action.payload
+        bookings: state.bookings.map((booking) =>
+          booking.bookingId === action.payload
+            ? { ...booking, status: "APPROVED" }
+            : booking
         ),
         isLoading: false,
       };
     case actionTypes.APPROVALS_REJECT_SUCCESS:
       return {
         ...state,
-        pendingBookings: state.pendingBookings.filter(
-          (booking) => booking.bookingId !== action.payload
+        bookings: state.bookings.map((booking) =>
+          booking.bookingId === action.payload
+            ? { ...booking, status: "REJECTED" }
+            : booking
         ),
         isLoading: false,
       };
