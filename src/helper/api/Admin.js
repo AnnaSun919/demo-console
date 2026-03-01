@@ -55,14 +55,14 @@ export default {
 
   // Booking Approval
   async getPendingBookings() {
-    return await apiClient.get('/admin/pending-bookings');
+    return await apiClient.get('/admin/pending-approvals');
   },
 
-  async approveBooking(id) {
-    return await apiClient.post(`/admin/approve-booking/${id}`);
+  async approveBooking(bookingId) {
+    return await apiClient.patch('/admin/approve-booking', null, { params: { bookingId } });
   },
 
-  async rejectBooking(id) {
-    return await apiClient.post(`/admin/reject-booking/${id}`);
+  async rejectBooking(bookingId) {
+    return await apiClient.patch('/admin/reject-booking', null, { params: { bookingId } });
   }
 };
