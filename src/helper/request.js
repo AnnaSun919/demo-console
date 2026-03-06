@@ -19,4 +19,22 @@ const apiClient = axios.create({
   }
 );
 
+// Response interceptor - handle token expiration
+apiClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Token expired or invalid - clear storage and redirect to login
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_state');
+      localStorage.removeItem('auth_role');
+      localStorage.removeItem('auth_user_info');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;
