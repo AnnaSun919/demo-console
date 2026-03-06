@@ -12,6 +12,7 @@ import Groups from "./pages/Groups";
 import UserBookings from "./pages/UserBookings";
 import Unauthorized from "./pages/Unauthorized";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Layout from "./components/Layout";
 
 export default function AuthRouter() {
   return (
@@ -21,17 +22,16 @@ export default function AuthRouter() {
       <Route element={<Unauthorized />} path="/unauthorized" />
 
       {/* Authenticated user routes */}
-      <Route element={<ProtectedRoute><Dashboard /></ProtectedRoute>} path="/dashboard" />
-      <Route element={<ProtectedRoute><BookRoom /></ProtectedRoute>} path="/book-room" />
-      <Route element={<ProtectedRoute><MyBookings /></ProtectedRoute>} path="/my-bookings" />
-      <Route element={<ProtectedRoute><Main /></ProtectedRoute>} path="/main" />
-      <Route element={<ProtectedRoute><BookingListPage /></ProtectedRoute>} path="/bookings" />
-
+      <Route element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} path="/dashboard" />
+      <Route element={<ProtectedRoute><Layout><BookRoom /></Layout></ProtectedRoute>} path="/book-room" />
+      <Route element={<ProtectedRoute><Layout><MyBookings /></Layout></ProtectedRoute>} path="/my-bookings" />
+      <Route element={<ProtectedRoute><Layout><Main /></Layout></ProtectedRoute>} path="/main" />
+      <Route element={<ProtectedRoute><Layout><BookingListPage /></Layout></ProtectedRoute>} path="/bookings" />
 
       {/* Admin routes (admin + superadmin) */}
-      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><ManageRooms /></ProtectedRoute>} path="/manage-rooms" />
-      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><Groups /></ProtectedRoute>} path="/groups" />
-      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><UserBookings /></ProtectedRoute>} path="/user-bookings" />
+      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><Layout><ManageRooms /></Layout></ProtectedRoute>} path="/manage-rooms" />
+      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><Layout><Groups /></Layout></ProtectedRoute>} path="/groups" />
+      <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin"]}><Layout><UserBookings /></Layout></ProtectedRoute>} path="/user-bookings" />
 
       {/* Default redirect */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -173,20 +173,20 @@ const BookRoom = () => {
   const today = moment().format("YYYY-MM-DD");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-6">
+    <div className="p-6">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-white' : 'text-white/50'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 1 ? 'bg-white text-indigo-600' : 'bg-white/30'}`}>
+          <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-indigo-600' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 1 ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}>
               1
             </div>
             <span className="font-medium">Select Facility</span>
           </div>
-          <div className="w-12 h-0.5 bg-white/30"></div>
-          <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-white' : 'text-white/50'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 2 ? 'bg-white text-indigo-600' : 'bg-white/30'}`}>
+          <div className="w-12 h-0.5 bg-gray-300"></div>
+          <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-indigo-600' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 2 ? 'bg-indigo-600 text-white' : 'bg-gray-200'}`}>
               2
             </div>
             <span className="font-medium">Select Timeslot</span>
