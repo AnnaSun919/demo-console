@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/actiontypes';
 import BookingList from '../helper/api/BookListPage';
+import { pushAlert } from "./Alerts";
 
 export const getBookings =
   ({ userId }) =>
@@ -7,16 +8,24 @@ export const getBookings =
       dispatch({
         type: ActionTypes.GET_BOOKINGS_LIST_REQUEST,
       });
-      const response = await BookingList.getBookings(userId);
-      if (response?.data?.success) {
-        dispatch({
-          type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,
-          payload: response.data,
-        });
-      } else {
+      try {
+        const response = await BookingList.getBookings(userId);
+        if (response?.data?.success) {
+          dispatch({
+            type: ActionTypes.GET_BOOKINGS_LIST_SUCCESS,
+            payload: response.data,
+          });
+        } else {
+          dispatch({
+            type: ActionTypes.GET_BOOKINGS_LIST_ERROR,
+          });
+          dispatch(pushAlert("Failed to load bookings.", "error"));
+        }
+      } catch (error) {
         dispatch({
           type: ActionTypes.GET_BOOKINGS_LIST_ERROR,
         });
+        dispatch(pushAlert("Failed to load bookings.", "error"));
       }
     };
 

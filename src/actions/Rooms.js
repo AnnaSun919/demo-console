@@ -1,5 +1,6 @@
 import * as actionTypes from "../constants/actiontypes";
 import AdminApi from "../helper/api/Admin";
+import { pushAlert } from "./Alerts";
 
 export const fetchRoomById = (roomId) => async (dispatch) => {
   dispatch({ type: actionTypes.ROOM_DETAIL_LOADING });
@@ -14,10 +15,12 @@ export const fetchRoomById = (roomId) => async (dispatch) => {
       return { success: true, room: roomData };
     }
     dispatch({ type: actionTypes.ROOM_DETAIL_ERROR });
+    dispatch(pushAlert("Failed to fetch room details.", "error"));
     return { success: false };
   } catch (error) {
     console.error("Failed to fetch room details:", error);
     dispatch({ type: actionTypes.ROOM_DETAIL_ERROR });
+    dispatch(pushAlert("Failed to fetch room details.", "error"));
     return { success: false };
   }
 };
@@ -36,10 +39,12 @@ export const fetchRooms = () =>
         });
       } else {
         dispatch({ type: actionTypes.ROOMS_FETCH_ERROR });
+        dispatch(pushAlert("Failed to fetch rooms.", "error"));
       }
     } catch (error) {
       console.error("Failed to fetch rooms:", error);
       dispatch({ type: actionTypes.ROOMS_FETCH_ERROR });
+      dispatch(pushAlert("Failed to fetch rooms.", "error"));
     }
   };
 
@@ -52,11 +57,14 @@ export const createRoom = (roomData) => async (dispatch) => {
         type: actionTypes.ROOMS_CREATE_SUCCESS,
         payload: response.data.room,
       });
+      dispatch(pushAlert("Room created successfully.", "success"));
       return { success: true };
     }
+    dispatch(pushAlert("Failed to create room.", "error"));
     return { success: false };
   } catch (error) {
     console.error("Failed to create room:", error);
+    dispatch(pushAlert("Failed to create room.", "error"));
     return { success: false };
   }
 };
@@ -70,11 +78,14 @@ export const editRoom = (roomId, roomData) => async (dispatch) => {
         type: actionTypes.ROOMS_UPDATE_SUCCESS,
         payload: { roomId, ...roomData },
       });
+      dispatch(pushAlert("Room updated successfully.", "success"));
       return { success: true };
     }
+    dispatch(pushAlert("Failed to update room.", "error"));
     return { success: false };
   } catch (error) {
     console.error("Failed to edit room:", error);
+    dispatch(pushAlert("Failed to update room.", "error"));
     return { success: false };
   }
 };
@@ -87,11 +98,14 @@ export const deleteRoom = (roomId) => async (dispatch) => {
         type: actionTypes.ROOMS_DELETE_SUCCESS,
         payload: roomId,
       });
+      dispatch(pushAlert("Room deleted successfully.", "success"));
       return { success: true };
     }
+    dispatch(pushAlert("Failed to delete room.", "error"));
     return { success: false };
   } catch (error) {
     console.error("Failed to delete room:", error);
+    dispatch(pushAlert("Failed to delete room.", "error"));
     return { success: false };
   }
 };
