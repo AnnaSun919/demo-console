@@ -7,6 +7,7 @@ import groupsReducer from "./reducers/Groups";
 import approvalsReducer from "./reducers/Approvals";
 import myBookingsReducer from "./reducers/MyBookings";
 import bookRoomReducer from "./reducers/BookRoom";
+import alertsReducer from "./reducers/Alerts";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   approvals: approvalsReducer,
   myBookings: myBookingsReducer,
   bookRoom: bookRoomReducer,
+  alerts: alertsReducer,
 });
 
 export default rootReducer;

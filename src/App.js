@@ -4,28 +4,13 @@ import DemoApp from "./DemoApp";
 import { BrowserRouter } from "react-router-dom";
 import { useMemo, useReducer, createContext } from "react";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "./rootReducer";
+import store from "./store";
 import { appinitialState, appcontextReducer } from "./reducer";
-import LocalStorageHelper from "./helper/local_storage_helper";
+import MessageHandler from "./components/MessageHandler";
+import { Provider as AlertProvider, positions, transitions } from 'react-alert';
+import ReactAlertTemplate from "./components/ReactAlertTemplate";
 
 const Context = createContext();
-
-const AUTH_INITIAL_STATE = {
-  isLoggedIn: false,
-  isLoading: false,
-  isSuccess: false,
-};
-
-const savedAuth = LocalStorageHelper.getAuthState();
-const auth_state = savedAuth ? savedAuth : AUTH_INITIAL_STATE;
-
-const initialState = { auth: auth_state  };
-
-const store = configureStore({
-  reducer: rootReducer,
-  preloadedState: initialState,
-});
 
 function AppContextProvider({ children }) {
   const [state, dispatch] = useReducer(appcontextReducer, appinitialState);
@@ -39,9 +24,18 @@ function App() {
     <>
       <BrowserRouter>
         <Provider store={store}>
-          <AppContextProvider>
-            <DemoApp />
-          </AppContextProvider>
+          <AlertProvider
+            template={ReactAlertTemplate}
+            position={positions.BOTTOM_CENTER}
+            timeout={5000}
+            offset="25px"
+            transition={transitions.SCALE}
+          >
+            <AppContextProvider>
+              <MessageHandler />
+              <DemoApp />
+            </AppContextProvider>
+          </AlertProvider>
         </Provider>
       </BrowserRouter>
     </>
