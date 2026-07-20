@@ -132,9 +132,6 @@ const MyBookings = () => {
             ) : (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No bookings found</p>
-                <Button className="mt-4" onClick={() => navigate("/book-room")}>
-                  Book a Room
-              </Button>
               </div>
             )}
           </CardContent>
