@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchRooms, fetchRoomById, createRoom, editRoom, deleteRoom } from "../actions/Rooms";
 import { fetchGroups } from "../actions/Groups";
 import { FormInput } from "../components/FormInput";
@@ -22,7 +21,7 @@ const ManageRooms = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
-  const [currentStep, setCurrentStep] = useState(1); // 1 = basic info, 2 = timeslots
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     capacity: "",
@@ -31,13 +30,10 @@ const ManageRooms = () => {
     isPublic: false,
     status: true,
   });
-
-  const [errorForm, setErrorForm] = useState({ messages: [], fields: [] });
-
-  // Timeslot state: { Monday: { status: true, startTime: "09:00", endTime: "18:00" }, ... }
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const [timeslotSettings, setTimeslotSettings] = useState({});
   const [interval, setInterval] = useState(60); // in minutes
+  const [errorForm, setErrorForm] = useState({ messages: [], fields: [] });
 
   useEffect(() => {
     dispatch(fetchRooms());
@@ -59,7 +55,6 @@ const ManageRooms = () => {
           status: roomData.status === "open",
         });
 
-        // Populate timeslot settings from API response
         const settings = {};
         DAYS.forEach(day => {
           settings[day] = { status: false, startTime: "09:00", endTime: "18:00" };
@@ -81,7 +76,6 @@ const ManageRooms = () => {
     } else {
       setEditingRoom(null);
       setFormData({ name: "", capacity: "", description: "", groupIds: [], isPublic: false, status: true });
-      // Initialize timeslot settings for each day
       const initialSettings = {};
       DAYS.forEach(day => {
         initialSettings[day] = { status: false, startTime: "09:00", endTime: "18:00" };
@@ -99,7 +93,6 @@ const ManageRooms = () => {
     setCurrentStep(1);
   };
 
-  // Timeslot functions
   const handleDayToggle = (day) => {
     setTimeslotSettings(prev => ({
       ...prev,
@@ -114,18 +107,6 @@ const ManageRooms = () => {
     }));
   };
 
-  const handleApplyToAll = () => {
-    const firstOpenDay = DAYS.find(day => timeslotSettings[day]?.status);
-    if (firstOpenDay) {
-      const { startTime, endTime } = timeslotSettings[firstOpenDay];
-      const newSettings = {};
-      DAYS.forEach(day => {
-        newSettings[day] = { ...timeslotSettings[day], startTime, endTime };
-      });
-      setTimeslotSettings(newSettings);
-    }
-  };
-
   const handleApplyWorkingHours = () => {
     const newSettings = {};
     DAYS.forEach(day => {
@@ -134,15 +115,10 @@ const ManageRooms = () => {
     setTimeslotSettings(newSettings);
   };
 
-  // Generate hours options (00:00 to 24:00)
   const HOURS_OPTIONS = Array.from({ length: 25 }, (_, i) =>
     `${i.toString().padStart(2, '0')}:00`
   );
 
-  // Get group ID (handle both id and groupId)
-  const getGroupId = (group) => group.groupId;
-
-  // Add group from dropdown
   const handleAddGroup = (groupId) => {
     const id = Number(groupId);
     if (!id || formData.groupIds.includes(id)) return;
@@ -153,7 +129,6 @@ const ManageRooms = () => {
     }));
   };
 
-  // Remove group from selected list
   const handleRemoveGroup = (groupId) => {
     setFormData((prev) => ({
       ...prev,
@@ -161,7 +136,6 @@ const ManageRooms = () => {
     }));
   };
 
-  // Handle public toggle
   const handlePublicToggle = (checked) => {
     setFormData((prev) => ({
       ...prev,
@@ -170,13 +144,6 @@ const ManageRooms = () => {
     }));
   };
 
-  // Get groups that are not yet selected (for dropdown)
-  const availableGroups = groups.filter((group) => !formData.groupIds.includes(group.groupId));
-
-  // Get selected group objects for display
-  const selectedGroups = groups.filter((group) => formData.groupIds.includes(group.groupId));
-
-  // Validation: must be public OR have at least one group selected
   const isAccessValid = formData.isPublic || formData.groupIds.length > 0;
 
   const handleNextStep = () => {
@@ -220,14 +187,13 @@ const ManageRooms = () => {
       intervalMins: String(interval),
     };
 
-    // if (editingRoom) {
-    //   const result = await dispatch(editRoom(editingRoom.roomId, submitData));
-    //   if (result.success) handleCloseModal();
-    // } else {
-    // if (errorMessages.length > 0 || errorFields.length > 0) {
-    //   const result = await dispatch(createRoom(submitData));
-    //   if (result.success) handleCloseModal();
-    // }}
+    if (editingRoom) {
+      const result = await dispatch(editRoom(editingRoom.roomId, submitData));
+      if (result.success) handleCloseModal();
+    } else {
+      const result = await dispatch(createRoom(submitData));
+      if (result.success) handleCloseModal();
+    }
   };
 
   const handleDeleteRoom = async (roomId) => {
