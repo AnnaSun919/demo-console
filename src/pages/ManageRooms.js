@@ -220,13 +220,14 @@ const ManageRooms = () => {
       intervalMins: String(interval),
     };
 
-    if (editingRoom) {
-      const result = await dispatch(editRoom(editingRoom.roomId, submitData));
-      if (result.success) handleCloseModal();
-    } else {
-      const result = await dispatch(createRoom(submitData));
-      if (result.success) handleCloseModal();
-    }
+    // if (editingRoom) {
+    //   const result = await dispatch(editRoom(editingRoom.roomId, submitData));
+    //   if (result.success) handleCloseModal();
+    // } else {
+    // if (errorMessages.length > 0 || errorFields.length > 0) {
+    //   const result = await dispatch(createRoom(submitData));
+    //   if (result.success) handleCloseModal();
+    // }}
   };
 
   const handleDeleteRoom = async (roomId) => {
@@ -285,11 +286,10 @@ const ManageRooms = () => {
               <CardHeader>
                 <CardTitle>{editingRoom ? "Edit Room" : "Add Room"} - Step {currentStep} of 2</CardTitle>
                 <CardDescription>
-                  {currentStep === 1 ? "Basic Information" : "Available Timeslots"}
+                  {currentStep === 1 ? "" : "Available Timeslots"}
                 </CardDescription>
               </CardHeader>
 
-              {/* Step 1: Basic Info */}
               {currentStep === 1 && (
                 <>
                   <CardContent className="space-y-4">
@@ -348,71 +348,62 @@ const ManageRooms = () => {
 
                     <div className="space-y-2">
                       <Label>Access Settings</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Choose whether this room is open to everyone or restricted to specific groups.
+                      </p>
 
-                      {/* Public checkbox - hide when groups are selected */}
-                      {formData.groupIds.length === 0 && (
-                        <div className="flex items-center gap-2 py-2 ml-2">
+                      <div className="flex items-center gap-4 py-1">
+                        <label className="flex items-center gap-2 cursor-pointer">
                           <input
-                            type="checkbox"
-                            id="isPublic"
+                            type="radio"
+                            name="accessType"
                             checked={formData.isPublic}
-                            onChange={(e) => handlePublicToggle(e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300"
+                            onChange={() => handlePublicToggle(true)}
+                            className="w-4 h-4 border-gray-300"
                           />
-                          <Label htmlFor="isPublic" className="cursor-pointer font-normal">
-                            Public Room (accessible to all users)
-                          </Label>
-                        </div>
-                      )}
+                          <span className="text-sm font-normal">Public (accessible to all users)</span>
+                        </label>
 
-                      {/* Group selection - only show when not public */}
-                      {!formData.isPublic && (
-                        <>
-                          {/* Selected groups as tags */}
-                          {selectedGroups.length > 0 && (
-                            <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
-                              {selectedGroups.map((group) => (
-                                <span
-                                  key={group.groupId}
-                                  className="inline-flex items-center gap-1 pl-3 pr-2 py-1 bg-blue-500 text-white rounded-full text-sm"
-                                >
-                                  {group.name}
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemoveGroup(group.groupId)}
-                                    className="ml-1 mr-1 hover:bg-blue-600 rounded-full w-4 h-4 flex items-center justify-center"
-                                  >
-                                    ×
-                                  </button>
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="accessType"
+                            checked={!formData.isPublic}
+                            onChange={() => handlePublicToggle(false)}
+                            className="w-4 h-4 border-gray-300"
+                          />
+                          <span className="text-sm font-normal">Specific groups</span>
+                        </label>
+                      </div>
 
-                          {/* Allowed Groups label - always above dropdown */}
-                          <Label className="text-sm text-muted-foreground">Allowed Groups</Label>
-
-                          {/* Dropdown to select groups - show when there are available groups */}
-                          {availableGroups.length > 0 && (
-                            <select
-                              className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
-                              value=""
+                      <Label className={`text-sm ${formData.isPublic ? 'text-muted-foreground/50' : 'text-muted-foreground'}`}>
+                        Allowed Groups
+                      </Label>
+                      <div className={`border rounded-md max-h-48 overflow-y-auto divide-y ${formData.isPublic ? 'opacity-50 pointer-events-none' : ''}`}>
+                        {groups.map((group) => (
+                          <label
+                            key={group.groupId}
+                            htmlFor={`group-${group.groupId}`}
+                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-muted/50"
+                          >
+                            <input
+                              type="checkbox"
+                              id={`group-${group.groupId}`}
+                              disabled={formData.isPublic}
+                              checked={formData.groupIds.includes(group.groupId)}
                               onChange={(e) => {
-                                if (e.target.value) {
-                                  handleAddGroup(e.target.value);
+                                if (e.target.checked) {
+                                  handleAddGroup(group.groupId);
+                                } else {
+                                  handleRemoveGroup(group.groupId);
                                 }
                               }}
-                            >
-                              <option value="">Select a group to add...</option>
-                              {availableGroups.map((group) => (
-                                <option key={group.groupId} value={group.groupId}>
-                                  {group.name}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        </>
-                      )}
+                              className="w-4 h-4 rounded border-gray-300 disabled:cursor-not-allowed"
+                            />
+                            <span className="text-sm">{group.name}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   </CardContent>
                   <CardFooter className="flex gap-3">
