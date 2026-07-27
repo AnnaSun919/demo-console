@@ -8,6 +8,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fetchRooms, fetchRoomById, createRoom, editRoom, deleteRoom } from "../actions/Rooms";
 import { fetchGroups } from "../actions/Groups";
+import { FormInput } from "../components/FormInput";
+import { validateFields } from '../helper/vallidate_field';
+
+import _ from 'lodash';
 
 const ManageRooms = () => {
   const navigate = useNavigate();
@@ -25,10 +29,12 @@ const ManageRooms = () => {
     description: "",
     groupIds: [],
     isPublic: false,
-    isOpen: true,
+    status: true,
   });
 
-  // Timeslot state: { Monday: { isOpen: true, startTime: "09:00", endTime: "18:00" }, ... }
+  const [errorForm, setErrorForm] = useState({ messages: [], fields: [] });
+
+  // Timeslot state: { Monday: { status: true, startTime: "09:00", endTime: "18:00" }, ... }
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const [timeslotSettings, setTimeslotSettings] = useState({});
   const [interval, setInterval] = useState(60); // in minutes
@@ -50,19 +56,19 @@ const ManageRooms = () => {
           description: roomData.description || "",
           groupIds: roomData.groupIds || [],
           isPublic: roomData.isPublic === true,
-          isOpen: roomData.status === "open",
+          status: roomData.status === "open",
         });
 
         // Populate timeslot settings from API response
         const settings = {};
         DAYS.forEach(day => {
-          settings[day] = { isOpen: false, startTime: "09:00", endTime: "18:00" };
+          settings[day] = { status: false, startTime: "09:00", endTime: "18:00" };
         });
         if (roomData.timeslots && roomData.timeslots.length > 0) {
           roomData.timeslots.forEach(slot => {
             if (slot.dayType && settings[slot.dayType]) {
               settings[slot.dayType] = {
-                isOpen: true,
+                status: true,
                 startTime: slot.startTime || "09:00",
                 endTime: slot.endTime || "18:00"
               };
@@ -74,11 +80,11 @@ const ManageRooms = () => {
       }
     } else {
       setEditingRoom(null);
-      setFormData({ name: "", capacity: "", description: "", groupIds: [], isPublic: false, isOpen: true });
+      setFormData({ name: "", capacity: "", description: "", groupIds: [], isPublic: false, status: true });
       // Initialize timeslot settings for each day
       const initialSettings = {};
       DAYS.forEach(day => {
-        initialSettings[day] = { isOpen: false, startTime: "09:00", endTime: "18:00" };
+        initialSettings[day] = { status: false, startTime: "09:00", endTime: "18:00" };
       });
       setTimeslotSettings(initialSettings);
       setInterval(60);
@@ -97,7 +103,7 @@ const ManageRooms = () => {
   const handleDayToggle = (day) => {
     setTimeslotSettings(prev => ({
       ...prev,
-      [day]: { ...prev[day], isOpen: !prev[day]?.isOpen }
+      [day]: { ...prev[day], status: !prev[day]?.status }
     }));
   };
 
@@ -109,7 +115,7 @@ const ManageRooms = () => {
   };
 
   const handleApplyToAll = () => {
-    const firstOpenDay = DAYS.find(day => timeslotSettings[day]?.isOpen);
+    const firstOpenDay = DAYS.find(day => timeslotSettings[day]?.status);
     if (firstOpenDay) {
       const { startTime, endTime } = timeslotSettings[firstOpenDay];
       const newSettings = {};
@@ -123,7 +129,7 @@ const ManageRooms = () => {
   const handleApplyWorkingHours = () => {
     const newSettings = {};
     DAYS.forEach(day => {
-      newSettings[day] = { isOpen: true, startTime: "09:00", endTime: "17:00" };
+      newSettings[day] = { status: true, startTime: "09:00", endTime: "17:00" };
     });
     setTimeslotSettings(newSettings);
   };
@@ -174,6 +180,13 @@ const ManageRooms = () => {
   const isAccessValid = formData.isPublic || formData.groupIds.length > 0;
 
   const handleNextStep = () => {
+    const { fields, messages } = validateFields(['name', 'capacity'], formData);
+
+    if (fields.length > 0) {
+      setErrorForm({ fields, messages });
+      return;
+    }
+
     setCurrentStep(2);
   };
 
@@ -184,11 +197,10 @@ const ManageRooms = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Format timeslots for API
     const timeslots = [];
     DAYS.forEach(day => {
       const setting = timeslotSettings[day];
-      if (setting?.isOpen) {
+      if (setting?.status) {
         timeslots.push({
           dayType: day,
           startTime: setting.startTime,
@@ -200,7 +212,7 @@ const ManageRooms = () => {
     const submitData = {
       name: formData.name,
       description: formData.description,
-      status: formData.isOpen ? "open" : "closed",
+      status: formData.status ? "open" : "closed",
       capacity: formData.capacity,
       isPublic: formData.isPublic,
       groupIds: formData.groupIds,
@@ -282,32 +294,58 @@ const ManageRooms = () => {
                 <>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Room Name</Label>
-                      <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                      <FormInput
+                        id="name"
+                        label="Room Name"
+                        value={formData.name}
+                        error={_.includes(errorForm.fields, 'name') ? errorForm.messages[0] : ''}
+                        onChange={(e) => {
+                          setFormData({ ...formData, name: e.target.value });
+                          setErrorForm(prev => ({ ...prev, fields: prev.fields.filter(f => f !== 'name') }));
+                        }}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="description">Description (optional)</Label>
-                      <Input id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Enter room description..." />
+                      <Input
+                        id="description"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Enter room description..." />
                     </div>
-                    <div className="flex items-center mt-4">
-                      <div className="flex items-center gap-2 flex-1">
-                        <Label htmlFor="capacity">Capacity</Label>
-                        <Input id="capacity" type="number" min="1" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} required className="w-20 ml-2" />
-                      </div>
-                      <div className="flex items-center gap-2 flex-1">
-                        <Label>Status</Label>
-                        <input
-                          type="checkbox"
-                          id="isOpen"
-                          checked={formData.isOpen}
-                          onChange={(e) => setFormData({ ...formData, isOpen: e.target.checked })}
-                          className="w-4 h-4 rounded border-gray-300 ml-2"
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <FormInput
+                          id="capacity"
+                          label="Capacity"
+                          type="number"
+                          min="1"
+                          value={formData.capacity}
+                          error={_.includes(errorForm.fields, 'capacity') ? errorForm.messages[0] : ''}
+                          onChange={(e) => {
+                            setFormData({ ...formData, capacity: e.target.value });
+                            setErrorForm(prev => ({ ...prev, fields: prev.fields.filter(f => f !== 'capacity') }));
+                          }}
+                          required
+                          className="w-20"
                         />
-                        <Label htmlFor="isOpen" className="cursor-pointer font-normal">
-                          Open
-                        </Label>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2 mt-4">
+                      <Label>Status</Label>
+                      <Input
+                        type="checkbox"
+                        id="status"
+                        checked={formData.isOpen}
+                        onChange={(e) => setFormData({ ...formData, isOpen: e.target.checked })}
+                        className="w-4 h-4 rounded border-gray-300 ml-2"
+                      />
+                      <Label htmlFor="status" className="cursor-pointer font-normal">
+                        Open
+                      </Label>
+                    </div>
+
                     <div className="space-y-2">
                       <Label>Access Settings</Label>
 
@@ -416,7 +454,7 @@ const ManageRooms = () => {
                             <label className="flex items-center gap-2 cursor-pointer">
                               <input
                                 type="checkbox"
-                                checked={timeslotSettings[day]?.isOpen || false}
+                                checked={timeslotSettings[day]?.status || false}
                                 onChange={() => handleDayToggle(day)}
                                 className="w-4 h-4 rounded border-gray-300"
                               />
@@ -424,7 +462,7 @@ const ManageRooms = () => {
                             </label>
                           </div>
 
-                          {timeslotSettings[day]?.isOpen && (
+                          {timeslotSettings[day]?.status && (
                             <div className="flex items-center gap-2">
                               <Label className="text-sm text-muted-foreground">From</Label>
                               <select
@@ -449,7 +487,7 @@ const ManageRooms = () => {
                             </div>
                           )}
 
-                          {!timeslotSettings[day]?.isOpen && (
+                          {!timeslotSettings[day]?.status && (
                             <span className="text-sm text-muted-foreground">Closed</span>
                           )}
                         </div>
