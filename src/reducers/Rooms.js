@@ -35,6 +35,12 @@ const roomsReducer = (state = initialState, action) => {
         rooms: [...state.rooms, action.payload],
         isLoading: false,
       };
+    case actionTypes.ROOMS_CREATE_ERROR:
+      return {
+        ...state,
+        rooms: [...state.rooms],
+        isLoading: false,
+      };
     case actionTypes.ROOMS_UPDATE_SUCCESS:
       return {
         ...state,

@@ -51,8 +51,11 @@ export const fetchRooms = () =>
 export const createRoom = (roomData) => async (dispatch) => {
   dispatch({ type: actionTypes.ROOMS_LOADING });
   try {
+
     const response = await AdminApi.createRoom(roomData);
+
     if (response?.data?.success) {
+
       dispatch({
         type: actionTypes.ROOMS_CREATE_SUCCESS,
         payload: response.data.room,
@@ -60,10 +63,13 @@ export const createRoom = (roomData) => async (dispatch) => {
       dispatch(pushAlert("Room created successfully.", "success"));
       return { success: true };
     }
-    dispatch(pushAlert("Failed to create room.", "error"));
+
+    const errMessage = response.data.message ? response.data.message : "Failed to create room.";
+
+    dispatch({ type: actionTypes.ROOMS_CREATE_ERROR });
+    dispatch(pushAlert(errMessage, "error"));
     return { success: false };
   } catch (error) {
-    console.error("Failed to create room:", error);
     dispatch(pushAlert("Failed to create room.", "error"));
     return { success: false };
   }
@@ -84,7 +90,6 @@ export const editRoom = (roomId, roomData) => async (dispatch) => {
     dispatch(pushAlert("Failed to update room.", "error"));
     return { success: false };
   } catch (error) {
-    console.error("Failed to edit room:", error);
     dispatch(pushAlert("Failed to update room.", "error"));
     return { success: false };
   }
